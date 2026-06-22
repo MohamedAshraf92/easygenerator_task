@@ -18,7 +18,19 @@ class EnvironmentVariables {
   NODE_ENV!: Environment;
 
   @IsString()
-  MONGODB_URI!: string;
+  MONGODB_HOST!: string;
+
+  @IsNumber()
+  MONGODB_PORT!: number;
+
+  @IsString()
+  MONGODB_DB!: string;
+
+  @IsString()
+  MONGODB_USER!: string;
+
+  @IsString()
+  MONGODB_PASSWORD!: string;
 
   @IsString()
   @MinLength(32)

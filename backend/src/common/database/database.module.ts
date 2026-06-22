@@ -8,7 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        uri: config.get<string>('MONGODB_URI'),
+        uri: `mongodb://${config.getOrThrow('MONGODB_USER')}:${config.getOrThrow('MONGODB_PASSWORD')}@${config.getOrThrow('MONGODB_HOST')}:${config.getOrThrow('MONGODB_PORT')}/${config.getOrThrow('MONGODB_DB')}?authSource=admin`,
       }),
     }),
   ],
