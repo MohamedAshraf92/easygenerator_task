@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
@@ -18,9 +22,18 @@ export class AuthService {
     if (existing) throw new ConflictException('Email already in use');
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
-    const user = await this.usersService.create(dto.email, dto.name, hashedPassword);
+    const user = await this.usersService.create(
+      dto.email,
+      dto.name,
+      hashedPassword,
+    );
 
-    const payload = { sub: (user as UserDocument & { _id: { toString(): string } })._id.toString(), email: user.email };
+    const payload = {
+      sub: (
+        user as UserDocument & { _id: { toString(): string } }
+      )._id.toString(),
+      email: user.email,
+    };
     return { accessToken: this.jwtService.sign(payload) };
   }
 
@@ -31,7 +44,12 @@ export class AuthService {
     const passwordMatch = await bcrypt.compare(dto.password, user.password);
     if (!passwordMatch) throw new UnauthorizedException('Invalid credentials');
 
-    const payload = { sub: (user as UserDocument & { _id: { toString(): string } })._id.toString(), email: user.email };
+    const payload = {
+      sub: (
+        user as UserDocument & { _id: { toString(): string } }
+      )._id.toString(),
+      email: user.email,
+    };
     return { accessToken: this.jwtService.sign(payload) };
   }
 }
