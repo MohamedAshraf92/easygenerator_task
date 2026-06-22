@@ -9,7 +9,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         pinoHttp: {
-          level: config.get<string>('NODE_ENV') === 'production' ? 'info' : 'debug',
+          level:
+            config.get<string>('NODE_ENV') === 'production' ? 'info' : 'debug',
           transport:
             config.get<string>('NODE_ENV') !== 'production'
               ? { target: 'pino-pretty', options: { singleLine: true } }

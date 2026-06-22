@@ -1,9 +1,47 @@
-import * as Joi from 'joi';
+import { plainToInstance } from 'class-transformer';
+import {
+  IsEnum,
+  IsNumber,
+  IsString,
+  MinLength,
+  validateSync,
+} from 'class-validator';
 
-export const envValidationSchema = Joi.object({
-  NODE_ENV: Joi.string().valid('development', 'production', 'test').default('development'),
-  MONGODB_URI: Joi.string().uri().required(),
-  JWT_SECRET: Joi.string().min(32).required(),
-  PORT: Joi.number().integer().default(3001),
-  FRONTEND_URL: Joi.string().uri().default('http://localhost:5173'),
-});
+enum Environment {
+  Development = 'development',
+  Production = 'production',
+  Test = 'test',
+}
+
+class EnvironmentVariables {
+  @IsEnum(Environment)
+  NODE_ENV!: Environment;
+
+  @IsString()
+  MONGODB_URI!: string;
+
+  @IsString()
+  @MinLength(32)
+  JWT_SECRET!: string;
+
+  @IsNumber()
+  PORT!: number;
+
+  @IsString()
+  FRONTEND_URL!: string;
+}
+
+export function validate(config: Record<string, unknown>) {
+  const validated = plainToInstance(EnvironmentVariables, config, {
+    enableImplicitConversion: true,
+  });
+  const errors = validateSync(validated, { skipMissingProperties: false });
+  if (errors.length) {
+    throw new Error(
+      errors
+        .map((e) => Object.values(e.constraints ?? {}).join(', '))
+        .join('\n'),
+    );
+  }
+  return validated;
+}
