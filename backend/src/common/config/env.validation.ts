@@ -1,5 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import {
+  IsBoolean,
   IsEnum,
   IsNumber,
   IsString,
@@ -41,6 +42,15 @@ class EnvironmentVariables {
 
   @IsString()
   FRONTEND_URL!: string;
+
+  @IsString()
+  ALLOWED_ORIGINS!: string;
+
+  @IsString()
+  CORS_METHODS!: string;
+
+  @IsBoolean()
+  CORS_CREDENTIALS!: boolean;
 }
 
 export function validate(config: Record<string, unknown>) {
