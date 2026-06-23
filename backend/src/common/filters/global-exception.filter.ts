@@ -19,7 +19,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     const isHttp = exception instanceof HttpException;
     const status = isHttp ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
-    const message = isHttp ? exception.message : 'Internal server error';
+    const { message, errors } = this.extractResponse(exception, isHttp);
 
     if (isHttp) {
       this.logger.warn({ status, path: request.url }, message);
@@ -29,9 +29,33 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     response.status(status).json({
       statusCode: status,
-      message,
+      message: this.toSnakeUpperCase(message),
+      errors,
       timestamp: new Date().toISOString(),
       path: request.url,
     });
+  }
+
+  private extractResponse(
+    exception: unknown,
+    isHttp: boolean,
+  ): { message: string; errors: string[] } {
+    if (!isHttp) return { message: 'Internal server error', errors: [] };
+
+    const httpException = exception as HttpException;
+    const res = httpException.getResponse();
+
+    if (typeof res === 'object' && res !== null && 'message' in res) {
+      const { message } = res as { message: string | string[] };
+      return Array.isArray(message)
+        ? { message: 'Validation failed', errors: message }
+        : { message, errors: [message] };
+    }
+
+    return { message: httpException.message, errors: [httpException.message] };
+  }
+
+  private toSnakeUpperCase(str: string): string {
+    return str.trim().toUpperCase().replace(/\s+/g, '_');
   }
 }
