@@ -80,6 +80,16 @@
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
+.inputError {
+  border-color: var(--error-text) !important;
+}
+
+.fieldError {
+  font-size: 0.8rem;
+  color: var(--error-text);
+  margin-top: -0.15rem;
+}
+
 .button {
   margin-top: 0.5rem;
   padding: 0.7rem;
