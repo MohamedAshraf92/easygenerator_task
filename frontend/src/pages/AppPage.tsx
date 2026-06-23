@@ -1,12 +1,14 @@
 import { useAuth } from '../context/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { logoutApi } from '../api/auth';
 import styles from './AppPage.module.css';
 
 export default function AppPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  function handleLogout() {
+  async function handleLogout() {
+    await logoutApi().catch(() => {});
     logout();
     navigate('/signin');
   }

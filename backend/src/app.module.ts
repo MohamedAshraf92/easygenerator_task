@@ -4,6 +4,7 @@ import { validate } from './common/config/env.validation';
 import { DatabaseModule } from './common/database/database.module';
 import { LoggerModule } from './common/logger/logger.module';
 import { FiltersModule } from './common/filters/filters.module';
+import { AppThrottlerModule } from './common/throttler/throttler.module';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
@@ -15,6 +16,7 @@ import { AuthModule } from './auth/auth.module';
     DatabaseModule,
     LoggerModule,
     FiltersModule,
+    AppThrottlerModule,
     AuthModule,
   ],
 })

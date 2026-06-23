@@ -12,25 +12,20 @@ function loadUser(): User | null {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));
   const [user, setUser] = useState<User | null>(loadUser);
 
-  const login = useCallback((newToken: string, newUser: User) => {
-    localStorage.setItem('token', newToken);
+  const login = useCallback((newUser: User) => {
     localStorage.setItem('user', JSON.stringify(newUser));
-    setToken(newToken);
     setUser(newUser);
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem('token');
     localStorage.removeItem('user');
-    setToken(null);
     setUser(null);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout, isAuthenticated: !!token }}>
+    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );

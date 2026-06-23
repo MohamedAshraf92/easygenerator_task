@@ -17,3 +17,5 @@ export const signIn = (email: string, password: string) =>
   api.post<AuthResponse>('/auth/signin', { email, password });
 
 export const getMe = () => api.get<User>('/auth/me');
+
+export const logoutApi = () => api.post('/auth/logout');

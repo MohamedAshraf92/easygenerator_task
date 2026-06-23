@@ -25,10 +25,9 @@ export default function SignIn() {
     setServerError('');
     setLoading(true);
     try {
-      const { data: res } = await signIn(data.email, data.password);
-      localStorage.setItem('token', res.accessToken);
+      await signIn(data.email, data.password);
       const { data: user } = await getMe();
-      login(res.accessToken, user);
+      login(user);
       navigate('/app');
     } catch (err) {
       const axiosErr = err as AxiosError<{ errors: string[] }>;

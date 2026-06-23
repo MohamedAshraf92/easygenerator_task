@@ -3,6 +3,7 @@ import {
   IsBoolean,
   IsEnum,
   IsNumber,
+  IsOptional,
   IsString,
   MinLength,
   validateSync,
@@ -51,6 +52,31 @@ class EnvironmentVariables {
 
   @IsBoolean()
   CORS_CREDENTIALS!: boolean;
+
+  @IsString()
+  COOKIE_NAME!: string;
+
+  @IsNumber()
+  COOKIE_MAX_AGE_MS!: number;
+
+  @IsBoolean()
+  COOKIE_SECURE!: boolean;
+
+  @IsString()
+  COOKIE_SAME_SITE!: string;
+
+  @IsString()
+  @IsOptional()
+  COOKIE_DOMAIN?: string;
+
+  @IsNumber()
+  THROTTLE_TTL_MS!: number;
+
+  @IsNumber()
+  THROTTLE_GLOBAL_LIMIT!: number;
+
+  @IsNumber()
+  THROTTLE_AUTH_LIMIT!: number;
 }
 
 export function validate(config: Record<string, unknown>) {
