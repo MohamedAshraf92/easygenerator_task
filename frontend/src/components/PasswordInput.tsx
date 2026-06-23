@@ -2,12 +2,11 @@ import { useState, forwardRef, InputHTMLAttributes } from 'react';
 import styles from './PasswordInput.module.css';
 
 type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> & {
-  hasError?: boolean;
   inputClassName?: string;
 };
 
 const PasswordInput = forwardRef<HTMLInputElement, Props>(
-  ({ hasError, inputClassName, ...props }, ref) => {
+  ({ inputClassName, ...props }, ref) => {
     const [visible, setVisible] = useState(false);
 
     return (

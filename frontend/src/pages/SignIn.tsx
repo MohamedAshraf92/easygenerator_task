@@ -3,8 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
-import { signIn } from '../api/auth';
-import { useAuth } from '../context/AuthContext';
+import { signIn, getMe } from '../api/auth';
+import { useAuth } from '../context/useAuth';
 import { signInSchema, type SignInFormData } from '../validation/auth.schemas';
 import PasswordInput from '../components/PasswordInput';
 import styles from './Auth.module.css';
@@ -26,7 +26,9 @@ export default function SignIn() {
     setLoading(true);
     try {
       const { data: res } = await signIn(data.email, data.password);
-      login(res.accessToken);
+      localStorage.setItem('token', res.accessToken);
+      const { data: user } = await getMe();
+      login(res.accessToken, user);
       navigate('/app');
     } catch (err) {
       const axiosErr = err as AxiosError<{ errors: string[] }>;
