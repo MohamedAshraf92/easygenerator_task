@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
     ConfigModule.forRoot({
       isGlobal: true,
       validate,
+      ignoreEnvFile: process.env.NODE_ENV === 'test',
     }),
     DatabaseModule,
     LoggerModule,

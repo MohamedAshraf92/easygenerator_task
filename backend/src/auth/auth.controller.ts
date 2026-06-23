@@ -10,7 +10,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Throttle, SkipThrottle } from '@nestjs/throttler';
+import { SkipThrottle } from '@nestjs/throttler';
 import type { Request as Req, Response as Res } from 'express';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signup.dto';
@@ -27,12 +27,7 @@ export class AuthController {
 
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
-  @Throttle({
-    default: {
-      ttl: 60000,
-      limit: Number(process.env.THROTTLE_AUTH_LIMIT ?? 5),
-    },
-  })
+  @SkipThrottle({ global: true })
   async signUp(@Body() dto: SignUpDto, @Response() res: Res) {
     const token = await this.authService.signUp(dto);
     const cookieName = this.configService.getOrThrow<string>('COOKIE_NAME');
@@ -42,12 +37,7 @@ export class AuthController {
 
   @Post('signin')
   @HttpCode(HttpStatus.OK)
-  @Throttle({
-    default: {
-      ttl: 60000,
-      limit: Number(process.env.THROTTLE_AUTH_LIMIT ?? 5),
-    },
-  })
+  @SkipThrottle({ global: true })
   async signIn(@Body() dto: SignInDto, @Response() res: Res) {
     const token = await this.authService.signIn(dto);
     const cookieName = this.configService.getOrThrow<string>('COOKIE_NAME');
@@ -57,7 +47,7 @@ export class AuthController {
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  @SkipThrottle()
+  @SkipThrottle({ global: true, auth: true })
   logout(@Response() res: Res) {
     const cookieName = this.configService.getOrThrow<string>('COOKIE_NAME');
     res.clearCookie(cookieName, buildCookieOptions(this.configService));
@@ -66,7 +56,7 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  @SkipThrottle()
+  @SkipThrottle({ global: true, auth: true })
   getMe(
     @Request() req: Req & { user: { id: string; email: string; name: string } },
   ) {

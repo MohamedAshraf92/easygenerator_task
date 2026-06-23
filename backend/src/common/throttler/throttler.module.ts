@@ -12,8 +12,14 @@ import { ThrottlerGuard } from '@nestjs/throttler';
       useFactory: (config: ConfigService) => ({
         throttlers: [
           {
+            name: 'global',
             ttl: config.getOrThrow<number>('THROTTLE_TTL_MS'),
             limit: config.getOrThrow<number>('THROTTLE_GLOBAL_LIMIT'),
+          },
+          {
+            name: 'auth',
+            ttl: config.getOrThrow<number>('THROTTLE_TTL_MS'),
+            limit: config.getOrThrow<number>('THROTTLE_AUTH_LIMIT'),
           },
         ],
       }),
