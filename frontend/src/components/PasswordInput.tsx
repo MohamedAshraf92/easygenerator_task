@@ -1,4 +1,5 @@
-import { useState, forwardRef, InputHTMLAttributes } from 'react';
+import { useState, forwardRef } from 'react';
+import type { InputHTMLAttributes } from 'react';
 import styles from './PasswordInput.module.css';
 
 type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> & {
