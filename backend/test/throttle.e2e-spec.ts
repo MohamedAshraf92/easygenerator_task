@@ -35,13 +35,13 @@ describe('Rate limiting (e2e)', () => {
 
   it('GET /auth/me — exempt from throttling, always returns 401 (no cookie)', async () => {
     for (let i = 0; i < AUTH_LIMIT + 2; i++) {
-      await request(server).get('/auth/me').expect(401);
+      await request(server).get('/v1/auth/me').expect(401);
     }
   });
 
   it('POST /auth/logout — exempt from throttling, always returns 200 (public endpoint)', async () => {
     for (let i = 0; i < AUTH_LIMIT + 2; i++) {
-      await request(server).post('/auth/logout').expect(200);
+      await request(server).post('/v1/auth/logout').expect(200);
     }
   });
 
@@ -51,11 +51,11 @@ describe('Rate limiting (e2e)', () => {
     const payload = { email: 'nobody@example.com', password: 'Wrong1!' };
 
     for (let i = 0; i < AUTH_LIMIT; i++) {
-      await request(server).post('/auth/signin').send(payload);
+      await request(server).post('/v1/auth/signin').send(payload);
     }
 
     const res = await request(server)
-      .post('/auth/signin')
+      .post('/v1/auth/signin')
       .send(payload)
       .expect(429);
 
@@ -63,11 +63,11 @@ describe('Rate limiting (e2e)', () => {
   });
 
   it('GET /auth/me still returns 401 (not 429) while signin bucket is exhausted', async () => {
-    await request(server).get('/auth/me').expect(401);
+    await request(server).get('/v1/auth/me').expect(401);
   });
 
   it('POST /auth/logout still returns 200 (not 429) while signin bucket is exhausted', async () => {
-    await request(server).post('/auth/logout').expect(200);
+    await request(server).post('/v1/auth/logout').expect(200);
   });
 
   // ─── Auth throttler: signup (separate per-endpoint bucket) ───────────────────
@@ -77,12 +77,12 @@ describe('Rate limiting (e2e)', () => {
 
     for (let i = 0; i < AUTH_LIMIT; i++) {
       await request(server)
-        .post('/auth/signup')
+        .post('/v1/auth/signup')
         .send({ ...base, email: `user${i}@example.com` });
     }
 
     const res = await request(server)
-      .post('/auth/signup')
+      .post('/v1/auth/signup')
       .send({ ...base, email: 'final@example.com' })
       .expect(429);
 

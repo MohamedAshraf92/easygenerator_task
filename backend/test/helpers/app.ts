@@ -1,6 +1,10 @@
 import { Server } from 'http';
 import { Test } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import {
+  INestApplication,
+  ValidationPipe,
+  VersioningType,
+} from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { getConnectionToken } from '@nestjs/mongoose';
@@ -36,6 +40,7 @@ export async function createTestApp(): Promise<TestApp> {
 
   const app = moduleFixture.createNestApplication();
   app.use(cookieParser());
+  app.enableVersioning({ type: VersioningType.URI });
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
   );

@@ -31,7 +31,7 @@ describe('Auth (e2e)', () => {
   describe('POST /auth/signup', () => {
     it('201 — creates account and sets HttpOnly cookie', async () => {
       const res = await request(server)
-        .post('/auth/signup')
+        .post('/v1/auth/signup')
         .send(validUser)
         .expect(201);
 
@@ -43,7 +43,7 @@ describe('Auth (e2e)', () => {
 
     it('409 — duplicate email', async () => {
       const res = await request(server)
-        .post('/auth/signup')
+        .post('/v1/auth/signup')
         .send(validUser)
         .expect(409);
 
@@ -52,7 +52,7 @@ describe('Auth (e2e)', () => {
 
     it('400 — missing email', async () => {
       const res = await request(server)
-        .post('/auth/signup')
+        .post('/v1/auth/signup')
         .send({ name: 'Test', password: 'Secret1!' })
         .expect(400);
 
@@ -63,7 +63,7 @@ describe('Auth (e2e)', () => {
 
     it('400 — invalid email format', async () => {
       const res = await request(server)
-        .post('/auth/signup')
+        .post('/v1/auth/signup')
         .send({ ...validUser, email: 'not-an-email' })
         .expect(400);
 
@@ -74,7 +74,7 @@ describe('Auth (e2e)', () => {
 
     it('400 — name too short', async () => {
       const res = await request(server)
-        .post('/auth/signup')
+        .post('/v1/auth/signup')
         .send({ ...validUser, email: 'new@example.com', name: 'ab' })
         .expect(400);
 
@@ -83,7 +83,7 @@ describe('Auth (e2e)', () => {
 
     it('400 — password too short', async () => {
       const res = await request(server)
-        .post('/auth/signup')
+        .post('/v1/auth/signup')
         .send({ ...validUser, email: 'new@example.com', password: 'Sh0!' })
         .expect(400);
 
@@ -92,7 +92,7 @@ describe('Auth (e2e)', () => {
 
     it('400 — password missing letter', async () => {
       const res = await request(server)
-        .post('/auth/signup')
+        .post('/v1/auth/signup')
         .send({ ...validUser, email: 'new@example.com', password: '12345678!' })
         .expect(400);
 
@@ -101,7 +101,7 @@ describe('Auth (e2e)', () => {
 
     it('400 — password missing number', async () => {
       const res = await request(server)
-        .post('/auth/signup')
+        .post('/v1/auth/signup')
         .send({ ...validUser, email: 'new@example.com', password: 'Password!' })
         .expect(400);
 
@@ -110,7 +110,7 @@ describe('Auth (e2e)', () => {
 
     it('400 — password missing special character', async () => {
       const res = await request(server)
-        .post('/auth/signup')
+        .post('/v1/auth/signup')
         .send({ ...validUser, email: 'new@example.com', password: 'Password1' })
         .expect(400);
 
@@ -123,7 +123,7 @@ describe('Auth (e2e)', () => {
   describe('POST /auth/signin', () => {
     it('200 — valid credentials sets HttpOnly cookie', async () => {
       const res = await request(server)
-        .post('/auth/signin')
+        .post('/v1/auth/signin')
         .send({ email: validUser.email, password: validUser.password })
         .expect(200);
 
@@ -135,7 +135,7 @@ describe('Auth (e2e)', () => {
 
     it('401 — wrong password', async () => {
       const res = await request(server)
-        .post('/auth/signin')
+        .post('/v1/auth/signin')
         .send({ email: validUser.email, password: 'WrongPass1!' })
         .expect(401);
 
@@ -144,7 +144,7 @@ describe('Auth (e2e)', () => {
 
     it('401 — email not registered', async () => {
       const res = await request(server)
-        .post('/auth/signin')
+        .post('/v1/auth/signin')
         .send({ email: 'nobody@example.com', password: 'Secret1!' })
         .expect(401);
 
@@ -153,7 +153,7 @@ describe('Auth (e2e)', () => {
 
     it('400 — invalid email format', async () => {
       const res = await request(server)
-        .post('/auth/signin')
+        .post('/v1/auth/signin')
         .send({ email: 'bad', password: 'Secret1!' })
         .expect(400);
 
@@ -162,7 +162,7 @@ describe('Auth (e2e)', () => {
 
     it('400 — missing password', async () => {
       const res = await request(server)
-        .post('/auth/signin')
+        .post('/v1/auth/signin')
         .send({ email: validUser.email })
         .expect(400);
 
@@ -175,13 +175,13 @@ describe('Auth (e2e)', () => {
   describe('GET /auth/me', () => {
     it('200 — returns user data with valid cookie', async () => {
       const signinRes = await request(server)
-        .post('/auth/signin')
+        .post('/v1/auth/signin')
         .send({ email: validUser.email, password: validUser.password });
 
       const cookie: string = (signinRes.headers['set-cookie'] as string[])[0];
 
       const res = await request(server)
-        .get('/auth/me')
+        .get('/v1/auth/me')
         .set('Cookie', cookie)
         .expect(200);
 
@@ -192,12 +192,12 @@ describe('Auth (e2e)', () => {
     });
 
     it('401 — no cookie', async () => {
-      await request(server).get('/auth/me').expect(401);
+      await request(server).get('/v1/auth/me').expect(401);
     });
 
     it('401 — invalid cookie value', async () => {
       await request(server)
-        .get('/auth/me')
+        .get('/v1/auth/me')
         .set('Cookie', 'access_token=invalid.jwt.token')
         .expect(401);
     });
@@ -208,13 +208,13 @@ describe('Auth (e2e)', () => {
   describe('POST /auth/logout', () => {
     it('200 — clears the cookie', async () => {
       const signinRes = await request(server)
-        .post('/auth/signin')
+        .post('/v1/auth/signin')
         .send({ email: validUser.email, password: validUser.password });
 
       const cookie: string = (signinRes.headers['set-cookie'] as string[])[0];
 
       const res = await request(server)
-        .post('/auth/logout')
+        .post('/v1/auth/logout')
         .set('Cookie', cookie)
         .expect(200);
 
@@ -224,14 +224,14 @@ describe('Auth (e2e)', () => {
 
     it('401 — /auth/me is rejected after logout', async () => {
       const signinRes = await request(server)
-        .post('/auth/signin')
+        .post('/v1/auth/signin')
         .send({ email: validUser.email, password: validUser.password });
 
       const cookie: string = (signinRes.headers['set-cookie'] as string[])[0];
 
-      await request(server).post('/auth/logout').set('Cookie', cookie);
+      await request(server).post('/v1/auth/logout').set('Cookie', cookie);
 
-      await request(server).get('/auth/me').expect(401);
+      await request(server).get('/v1/auth/me').expect(401);
     });
   });
 });
