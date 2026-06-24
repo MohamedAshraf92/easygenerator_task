@@ -36,7 +36,9 @@ describe('Auth (e2e)', () => {
         .expect(201);
 
       expect(res.headers['set-cookie']).toBeDefined();
-      const cookie: string = (res.headers['set-cookie'] as string[])[0];
+      const cookie: string = (
+        res.headers['set-cookie'] as unknown as string[]
+      )[0];
       expect(cookie).toContain('access_token=');
       expect(cookie).toContain('HttpOnly');
     });
@@ -128,7 +130,9 @@ describe('Auth (e2e)', () => {
         .expect(200);
 
       expect(res.headers['set-cookie']).toBeDefined();
-      const cookie: string = (res.headers['set-cookie'] as string[])[0];
+      const cookie: string = (
+        res.headers['set-cookie'] as unknown as string[]
+      )[0];
       expect(cookie).toContain('access_token=');
       expect(cookie).toContain('HttpOnly');
     });
@@ -178,7 +182,9 @@ describe('Auth (e2e)', () => {
         .post('/v1/auth/signin')
         .send({ email: validUser.email, password: validUser.password });
 
-      const cookie: string = (signinRes.headers['set-cookie'] as string[])[0];
+      const cookie: string = (
+        signinRes.headers['set-cookie'] as unknown as string[]
+      )[0];
 
       const res = await request(server)
         .get('/v1/auth/me')
@@ -211,14 +217,18 @@ describe('Auth (e2e)', () => {
         .post('/v1/auth/signin')
         .send({ email: validUser.email, password: validUser.password });
 
-      const cookie: string = (signinRes.headers['set-cookie'] as string[])[0];
+      const cookie: string = (
+        signinRes.headers['set-cookie'] as unknown as string[]
+      )[0];
 
       const res = await request(server)
         .post('/v1/auth/logout')
         .set('Cookie', cookie)
         .expect(200);
 
-      const setCookie: string = (res.headers['set-cookie'] as string[])[0];
+      const setCookie: string = (
+        res.headers['set-cookie'] as unknown as string[]
+      )[0];
       expect(setCookie).toContain('access_token=;');
     });
 
@@ -227,7 +237,9 @@ describe('Auth (e2e)', () => {
         .post('/v1/auth/signin')
         .send({ email: validUser.email, password: validUser.password });
 
-      const cookie: string = (signinRes.headers['set-cookie'] as string[])[0];
+      const cookie: string = (
+        signinRes.headers['set-cookie'] as unknown as string[]
+      )[0];
 
       await request(server).post('/v1/auth/logout').set('Cookie', cookie);
 
